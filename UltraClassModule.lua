@@ -1,6 +1,6 @@
-local UltraAbilities = {}
+local UltraClassModule = {}
 
-UltraAbilities.UltraAbilitiesMap = {
+local UltraAbilities = {
     ["Lightning Drop"] = "Dragon Sage",
     ["Axe Kick"] = "Oni",
     ["Observe"] = "Illusionist",
@@ -17,16 +17,16 @@ UltraAbilities.UltraAbilitiesMap = {
     ["Grindstone"] = "Lapidarist",
     ["Swallow Reversal"] = "Ronin",
     ["Abyssal Scream"] = "Abysswalker",
-    ["Puncture"] = "Vanguard"
+    ["Puncture"] = "Vanguard",
 }
 
-function UltraAbilities.getUltraClass(player)
-    for _, container in ipairs({player.Character, player:FindFirstChild("Backpack")}) do
+function UltraClassModule.GetUltraClass(player)
+    local containers = {player.Character, player:FindFirstChild("Backpack")}
+    for _, container in ipairs(containers) do
         if container then
             for _, item in ipairs(container:GetChildren()) do
-                local ultra = UltraAbilities.UltraAbilitiesMap[item.Name]
-                if ultra then
-                    return ultra
+                if UltraAbilities[item.Name] then
+                    return UltraAbilities[item.Name]
                 end
             end
         end
@@ -34,4 +34,4 @@ function UltraAbilities.getUltraClass(player)
     return nil
 end
 
-return UltraAbilities
+return UltraClassModule
