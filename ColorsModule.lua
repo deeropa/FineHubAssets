@@ -1,33 +1,31 @@
-local ColorsModule = {}
+local ColorModule = {}
 
-function ColorsModule.createColorPickers(Tabs)
-    local colors = {}
+local UltraClassModule = require(script.Parent.UltraClassModule) -- Adjust path as needed
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-    colors.UltraColor = Tabs.EspTab:AddColorpicker("UltraColor", {
-        Title = "Ultra ESP Color",
-        Default = Color3.fromRGB(255, 0, 0)
-    })
-    colors.UltraColor:SetValueRGB(Color3.fromRGB(255, 0, 0))
+ColorModule.Colors = {
+    Ultra = Color3.fromRGB(255, 0, 0),
+    NoUltra = Color3.fromRGB(100, 100, 100),
+    Illusionist = Color3.fromRGB(0, 170, 255),
+    Yourself = Color3.fromRGB(0, 255, 0),
+}
 
-    colors.IllusionistColor = Tabs.EspTab:AddColorpicker("IllusionistColor", {
-        Title = "Illusionist Color",
-        Default = Color3.fromRGB(0, 170, 255)
-    })
-    colors.IllusionistColor:SetValueRGB(Color3.fromRGB(0, 170, 255))
-
-    colors.NoUltraColor = Tabs.EspTab:AddColorpicker("NoUltraColor", {
-        Title = "No Ultra Color",
-        Default = Color3.fromRGB(255, 255, 255)
-    })
-    colors.NoUltraColor:SetValueRGB(Color3.fromRGB(255, 255, 255))
-
-    colors.YourselfColor = Tabs.EspTab:AddColorpicker("YourselfColor", {
-        Title = "Yourself Color",
-        Default = Color3.fromRGB(0, 255, 0)
-    })
-    colors.YourselfColor:SetValueRGB(Color3.fromRGB(0, 255, 0))
-
-    return colors
+function ColorModule.GetLabelColor(player)
+    if not player then
+        return ColorModule.Colors.NoUltra
+    elseif player == LocalPlayer then
+        return ColorModule.Colors.Yourself
+    else
+        local ultraClass = UltraClassModule.GetUltraClass(player)
+        if ultraClass == "Illusionist" then
+            return ColorModule.Colors.Illusionist
+        elseif ultraClass then
+            return ColorModule.Colors.Ultra
+        else
+            return ColorModule.Colors.NoUltra
+        end
+    end
 end
 
-return ColorsModule
+return ColorModule
