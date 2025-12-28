@@ -1,5 +1,3 @@
-# WEEDHACK DECRYPTOR
-# Restores files encrypted with .weedhack extension
 
 $Target = "C:\Users"
 $EncryptedExtension = ".weedhack"
@@ -9,7 +7,7 @@ Write-Host "========================================" -ForegroundColor Green
 Write-Host "        WEEDHACK DECRYPTOR              " -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 
-# Get recovery key from Desktop
+
 $keyFile = "$env:USERPROFILE\Desktop\WEEDHACK_RECOVERY_KEY.txt"
 if (-not (Test-Path $keyFile)) {
     Write-Host "ERROR: Recovery key file not found on Desktop!" -ForegroundColor Red
@@ -29,7 +27,7 @@ if (-not (Test-Path $keyFile)) {
     Write-Host "Recovery key loaded from: $keyFile" -ForegroundColor Green
 }
 
-# Convert Base64 strings back to bytes
+
 try {
     $key = [Convert]::FromBase64String($keyB64)
     $iv = [Convert]::FromBase64String($ivB64)
@@ -38,7 +36,7 @@ try {
     exit
 }
 
-# Create AES decryptor
+
 $aes = [System.Security.Cryptography.Aes]::Create()
 $aes.Key = $key
 $aes.IV = $iv
@@ -53,27 +51,27 @@ Write-Host "Found $($files.Count) encrypted files" -ForegroundColor Yellow
 Write-Host "Decrypting files..." -ForegroundColor Yellow
 foreach ($file in $files) {
     try {
-        # Read the encrypted file
+  
         $encryptedData = [IO.File]::ReadAllBytes($file.FullName)
         
-        # Extract IV (first 16 bytes) and encrypted content (rest)
+   
         $fileIV = $encryptedData[0..15]
         $cipherText = $encryptedData[16..($encryptedData.Length-1)]
         
-        # Set the IV (should match, but using from file for safety)
+      
         $aes.IV = $fileIV
         $decryptor = $aes.CreateDecryptor()
         
-        # Decrypt
+   
         $decrypted = $decryptor.TransformFinalBlock($cipherText, 0, $cipherText.Length)
         
-        # Determine original filename (remove .weedhack extension)
+      
         $originalPath = $file.FullName.Substring(0, $file.FullName.Length - $EncryptedExtension.Length)
         
-        # Write decrypted file
+       
         [IO.File]::WriteAllBytes($originalPath, $decrypted)
         
-        # Delete encrypted file
+    
         [IO.File]::Delete($file.FullName)
         
         $count++
@@ -91,7 +89,7 @@ foreach ($file in $files) {
 
 Write-Host "`n`nDecrypted $count/$($files.Count) files" -ForegroundColor Green
 
-# Remove recovery key if requested
+
 $removeKey = Read-Host "Remove recovery key file? (y/n)"
 if ($removeKey -eq 'y' -or $removeKey -eq 'Y') {
     if (Test-Path $keyFile) {
